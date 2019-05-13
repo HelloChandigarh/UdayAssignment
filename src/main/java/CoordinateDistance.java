@@ -12,11 +12,10 @@ import java.util.stream.Collectors;
 public class CoordinateDistance {
 
 
-    public static void main(String[] args) {
-
-        CoordinateDistance coordinateDistance=new CoordinateDistance();
-        Integer x=Integer.parseInt(args[0]);
-        Integer y=Integer.parseInt(args[1]);
+    public Map<String, Double> getSortedListOfDistanceFromOrigin(String xCoordinate,String yCoordinate){
+        Map<String, Double> sortedByDistance=null;
+        Integer x=Integer.parseInt(xCoordinate);
+        Integer y=Integer.parseInt(yCoordinate);
 
         Map<String,Double> mapDistance=new HashMap<>();
 
@@ -33,14 +32,12 @@ public class CoordinateDistance {
                 int x2=Integer.parseInt(values[0]);
                 int y2=Integer.parseInt(values[1]);
                 mapDistance.put(jsonObject.get("value").toString(),
-                        coordinateDistance.getDistance(x,y,x2,y2));
+                        getDistance(x,y,x2,y2));
             }
-            Map<String, Double> sortedByDistance =mapDistance.entrySet().stream()
+            sortedByDistance =mapDistance.entrySet().stream()
                     .sorted(Map.Entry.<String,Double>comparingByValue())
                     .collect(Collectors.toMap(Map.Entry::getKey,
                             Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
-
-            sortedByDistance.entrySet().stream().forEach(a-> System.out.println(a.getKey()));
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -49,6 +46,14 @@ public class CoordinateDistance {
         } catch (ParseException e) {
             e.printStackTrace();
         }
+        return sortedByDistance;
+    }
+
+
+    public static void main(String[] args) {
+        CoordinateDistance coordinateDistance=new CoordinateDistance();
+        Map<String, Double> sortedByDistance=coordinateDistance.getSortedListOfDistanceFromOrigin(args[0],args[1]);
+        sortedByDistance.entrySet().stream().forEach(a-> System.out.println(a.getKey()));
     }
 
     public double getDistance(int x1,int y1,int x2,int y2){
